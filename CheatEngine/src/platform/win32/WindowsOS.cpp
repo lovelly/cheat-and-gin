@@ -3,12 +3,12 @@
 #include "WindowsProcess.h"
 
 #include <iostream>
-
+#include"tlhelp32.h"
 std::unique_ptr<OS> OS::getOS() { return std::unique_ptr<OS>(new WindowsOS); }
 
 
 std::vector<pid_t> WindowsOS::getProcesses(const std::string& name) const {
-  vector<pid_t> processes;
+	std::vector<pid_t> processes;
 
   PROCESSENTRY32 entry;
   entry.dwSize = sizeof(PROCESSENTRY32);

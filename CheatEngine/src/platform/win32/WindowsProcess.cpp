@@ -28,13 +28,12 @@ WindowsProcess::~WindowsProcess() {
 
 std::vector<MemoryPage> WindowsProcess::getCheatablePages() const {
   std::vector<MemoryPage> pages;
-
-  for (address_t address = nullptr, MEMORY_BASIC_INFORMATION page;
-      VirtualQueryEx(handle, address, &page, sizeof(page)) == sizeof(page);
-      address = static_cast<address_t>(page.BaseAddress) + page.RegionSize) {
-    if (can_cheat_page(page)) {
-      pages.emplace_back(address, page.RegionSize);
-    }
+  address_t address = nullptr;
+  for ( MEMORY_BASIC_INFORMATION page;  VirtualQueryEx(handle, address, &page, sizeof(page)) == sizeof(page);
+	  address = static_cast<address_t>(page.BaseAddress) + page.RegionSize) {
+	  if (can_cheat_page(page)) {
+		  pages.emplace_back(address, page.RegionSize);
+	  }
   }
 
   return pages;
@@ -44,7 +43,7 @@ memory_t WindowsProcess::read(MemoryPage page) const {
   memory_t memory(page.size);
 
   DWORD total;
-  if (!ReadProcessMemory(handle, page.address, memory.data(),
+  if (!ReadProcessMemory(handle, page.start, memory.data(),
                          page.size, &total)) {
     std::cerr << "Failed to read process memory." << std::endl;
     exit(1);
